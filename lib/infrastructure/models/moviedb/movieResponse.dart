@@ -1,11 +1,3 @@
-import 'dart:convert';
-
-MovieDbResponse movieDbResponseFromJson(String str) =>
-    MovieDbResponse.fromJson(json.decode(str));
-
-String movieDbResponseToJson(MovieDbResponse data) =>
-    json.encode(data.toJson());
-
 class MovieDbResponse {
   final Dates dates;
   final int page;
@@ -20,20 +12,6 @@ class MovieDbResponse {
     required this.totalPages,
     required this.totalResults,
   });
-
-  MovieDbResponse copyWith({
-    Dates? dates,
-    int? page,
-    List<MovieDb>? results,
-    int? totalPages,
-    int? totalResults,
-  }) => MovieDbResponse(
-    dates: dates ?? this.dates,
-    page: page ?? this.page,
-    results: results ?? this.results,
-    totalPages: totalPages ?? this.totalPages,
-    totalResults: totalResults ?? this.totalResults,
-  );
 
   factory MovieDbResponse.fromJson(Map<String, dynamic> json) =>
       MovieDbResponse(
@@ -61,9 +39,6 @@ class Dates {
 
   Dates({required this.maximum, required this.minimum});
 
-  Dates copyWith({DateTime? maximum, DateTime? minimum}) =>
-      Dates(maximum: maximum ?? this.maximum, minimum: minimum ?? this.minimum);
-
   factory Dates.fromJson(Map<String, dynamic> json) => Dates(
     maximum: DateTime.parse(json["maximum"]),
     minimum: DateTime.parse(json["minimum"]),
@@ -80,7 +55,7 @@ class Dates {
 class MovieDb {
   final bool adult;
   final String backdropPath;
-  final List<String> genreIds;
+  final List<int> genreIds;
   final int id;
   final String title;
   final String originalLanguage;
@@ -112,44 +87,10 @@ class MovieDb {
     required this.voteCount,
   });
 
-  MovieDb copyWith({
-    bool? adult,
-    String? backdropPath,
-    List<String>? genreIds,
-    int? id,
-    String? title,
-    String? originalLanguage,
-    String? originalTitle,
-    String? overview,
-    double? popularity,
-    String? posterPath,
-    DateTime? releaseDate,
-    bool? softcore,
-    bool? video,
-    double? voteAverage,
-    int? voteCount,
-  }) => MovieDb(
-    adult: adult ?? this.adult,
-    backdropPath: backdropPath ?? this.backdropPath,
-    genreIds: genreIds ?? this.genreIds,
-    id: id ?? this.id,
-    title: title ?? this.title,
-    originalLanguage: originalLanguage ?? this.originalLanguage,
-    originalTitle: originalTitle ?? this.originalTitle,
-    overview: overview ?? this.overview,
-    popularity: popularity ?? this.popularity,
-    posterPath: posterPath ?? this.posterPath,
-    releaseDate: releaseDate ?? this.releaseDate,
-    softcore: softcore ?? this.softcore,
-    video: video ?? this.video,
-    voteAverage: voteAverage ?? this.voteAverage,
-    voteCount: voteCount ?? this.voteCount,
-  );
-
   factory MovieDb.fromJson(Map<String, dynamic> json) => MovieDb(
     adult: json["adult"],
     backdropPath: json["backdrop_path"],
-    genreIds: List<String>.from(json["genre_ids"].map((x) => x.toString())),
+    genreIds: List<int>.from(json["genre_ids"].map((x) => x)),
     id: json["id"],
     title: json["title"],
     originalLanguage: json["original_language"],
@@ -167,7 +108,7 @@ class MovieDb {
   Map<String, dynamic> toJson() => {
     "adult": adult,
     "backdrop_path": backdropPath,
-    "genre_ids": List<dynamic>.from(genreIds.map((x) => x.toString())),
+    "genre_ids": List<dynamic>.from(genreIds.map((x) => x)),
     "id": id,
     "title": title,
     "original_language": originalLanguage,

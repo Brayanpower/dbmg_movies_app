@@ -12,16 +12,10 @@ class MoviedbDatasourceImpl extends MoviesDatasource {
       baseUrl: Environment.apiUrl,
       queryParameters: {
         'api_key': Environment.theMovieDBKey,
-        'languaje': Environment.language,
+        'language': Environment.language,
       },
     ),
   );
-
-  @override
-  Future<Movie> getMovieById(String id) {
-    // TODO: implement getMovieById
-    throw UnimplementedError();
-  }
 
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
@@ -29,12 +23,19 @@ class MoviedbDatasourceImpl extends MoviesDatasource {
       '/movie/now_playing',
       queryParameters: {'page': page},
     );
-    print(response.data);
+
     final movieDbResponse = MovieDbResponse.fromJson(response.data);
     final List<Movie> movies = movieDbResponse.results
         .map((movieDb) => MovieMapper.movieDbToEntity(movieDb))
         .toList();
-    return [];
+
+    return movies;
+  }
+
+  @override
+  Future<Movie> getMovieById(String id) {
+    // TODO: implement getMovieById
+    throw UnimplementedError();
   }
 
   @override

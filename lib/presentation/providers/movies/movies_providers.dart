@@ -2,28 +2,36 @@ import 'package:bdmg_movies_app/domain/entities/movie.dart';
 import 'package:bdmg_movies_app/presentation/providers/providers.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
-final nowPlayingMoviesProviders =
+final nowPlayingMoviesProvider =
     StateNotifierProvider<MoviesNotifier, List<Movie>>((ref) {
-      final fechtMoreMovie = ref.watch(movieRepositoryProvider).getNowPlaying;
-      return MoviesNotifier(fechtMoreMovie: fechtMoreMovie);
+      final fetchMoreMovies = ref.watch(movieRepositoryProvider).getNowPlaying;
+      return MoviesNotifier(fetchMoreMovies: fetchMoreMovies);
     });
 
-typedef MovieCallBack = Future<List<Movie>> Function({int page});
+typedef MovieCallback = Future<List<Movie>> Function({int page});
 
 class MoviesNotifier extends StateNotifier<List<Movie>> {
   int currentPage = 0;
   bool isLoading = false;
-  MovieCallBack fechtMoreMovie;
+  MovieCallback fetchMoreMovies;
 
-  MoviesNotifier({required this.fechtMoreMovie}) : super([]);
+  MoviesNotifier({required this.fetchMoreMovies}) : super([]);
 
   Future<void> loadNextPage() async {
     if (isLoading) return;
+
     isLoading = true;
     currentPage++;
-    final List<Movie> movies = await fechtMoreMovie(page: currentPage);
-    state = [...state, ...movies];
-    await Future.delayed(const Duration(microseconds: 300));
+
+    final List<Movie> movies = await fetchMoreMovies(page: currentPage);
+    state = [
+      ...state,
+      ...movies,
+    ]; // Aquí actualizas el estado con las nuevas películas
+
+    // Cambiado de seconds: 300 a milliseconds: 300
+    await Future.delayed(const Duration(milliseconds: 300));
+
     isLoading = false;
   }
 }
