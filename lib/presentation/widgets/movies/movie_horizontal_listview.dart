@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../domain/domain.dart';
 
@@ -22,14 +23,39 @@ class MovieHorizontalListview extends StatefulWidget {
 }
 
 class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
+  final scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    scrollController.addListener(() {
+      if (widget.loadNextPage == null) return;
+
+      if (scrollController.position.pixels + 200 >=
+          scrollController.position.maxScrollExtent) {
+        widget.loadNextPage!();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 350,
       child: Column(
         children: [
+          _Title(title: widget.title, subtitle: widget.subtitle),
+
           Expanded(
             child: ListView.builder(
+              controller: scrollController,
               itemCount: widget.movies.length,
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
@@ -38,6 +64,36 @@ class _MovieHorizontalListviewState extends State<MovieHorizontalListview> {
               },
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Title extends StatelessWidget {
+  final String? title;
+  final String? subtitle;
+  const _Title({this.title, this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
+
+    return Container(
+      padding: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      child: Row(
+        children: [
+          if (title != null) Text(title!, style: titleStyle),
+
+          Spacer(),
+
+          if (subtitle != null)
+            FilledButton.tonal(
+              onPressed: () {},
+              style: ButtonStyle(visualDensity: VisualDensity.compact),
+              child: Text(subtitle!),
+            ),
         ],
       ),
     );
@@ -53,27 +109,21 @@ class _Slide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          //Imagen
           SizedBox(
             width: 150,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: GestureDetector(
-                child: Image.network(
-                  height: 220,
-                  movie.posterPath,
-                  fit: BoxFit.cover,
-                ),
+                onTap: () => context.push('/home/0/movie/${movie.id}'),
+                child: Image.network(movie.posterPath, fit: BoxFit.cover),
               ),
             ),
           ),
 
-          SizedBox(height: 5),
-
+          //Titulo
           SizedBox(
             width: 150,
             child: Text(movie.title, maxLines: 2, textAlign: TextAlign.center),
