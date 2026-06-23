@@ -1,8 +1,14 @@
+import 'package:bdmg_movies_app/config/helpers/humar_format.dart';
+import 'package:bdmg_movies_app/presentation/widgets/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bdmg_movies_app/domain/domain.dart';
 import 'package:bdmg_movies_app/presentation/providers/providers.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../widgets/movies/movie_raiting.dart' show MovieRaiting;
 
 class MovieScreen extends ConsumerStatefulWidget {
   static const name = 'movie-screen';
@@ -66,6 +72,7 @@ class _MovieDetails extends StatelessWidget {
         _TitleAndOverview(movie: movie),
 
         // TODO: Géneros de la película
+        MovieGenres(movie: movie),
 
         //TODO: Actores de la película
 
@@ -78,13 +85,58 @@ class _MovieDetails extends StatelessWidget {
 }
 
 class _TitleAndOverview extends StatelessWidget {
-  const _TitleAndOverview({super.key, required this.movie});
-
   final Movie movie;
+
+  const _TitleAndOverview({required this.movie});
 
   @override
   Widget build(BuildContext context) {
-    return Text(movie.title);
+    final size = MediaQuery.of(context).size;
+    final textStyle = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(20),
+            child: Image.network(movie.posterPath, width: size.width * 0.3),
+          ),
+
+          SizedBox(width: 10),
+
+          SizedBox(
+            width: (size.width - 40) * 0.7,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(movie.title, style: textStyle.titleLarge),
+                Text(
+                  movie.overview.isNotEmpty
+                      ? movie.overview
+                      : 'Sin información',
+                ),
+
+                SizedBox(height: 10),
+                MovieRaiting(voteAverage: movie.voteAverage),
+
+                Row(
+                  children: [
+                    Text(
+                      'Estreno',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 5),
+                    Text(HumanFormats.shortDate(movie.releaseDate)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
