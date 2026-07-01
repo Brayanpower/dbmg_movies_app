@@ -1,8 +1,8 @@
 import 'package:bdmg_movies_app/domain/domain.dart';
 
 abstract class MoviesDatasource {
+  Future<List<Actor>> getActorsByMovie(String movieId);
 
-  Future<List<Actor>>getActorsByMovi(String movieid);
   Future<List<Movie>> getNowPlaying({int page = 1});
 
   Future<List<Movie>> getPopular({int page = 1});
@@ -18,6 +18,4 @@ abstract class MoviesDatasource {
   Future<List<Movie>> getSimilarMovie(String movieId);
 
   Future<List<dynamic>> getYoutubeVideoById(String movieId);
-
-
 }

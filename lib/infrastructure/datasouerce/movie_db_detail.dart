@@ -2,7 +2,6 @@
 //
 //     final movieDbDetail = movieDbDetailFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 MovieDbDetail movieDbDetailFromJson(String str) =>
